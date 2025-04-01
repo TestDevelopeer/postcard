@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Instagram Lyrics Effect</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: 'Helvetica Neue', Arial, sans-serif;
+			background-color: #000;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			color: white;
+		}
+
+		.story-container {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			background: #b08781;
+			overflow: scroll;
+		}
+
+		.lyrics-container {
+			align-content: center;
+			justify-content: center;
+			flex-wrap: wrap;
+			display: flex;
+			height: 100%;
+			text-align: center;
+			font-size: 14px;
+			padding: 10px;
+			font-weight: bold;
+			line-height: 1.5;
+			text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+		}
+
+		.word {
+			opacity: 0.2;
+			transition: all 0.4s;
+		}
+
+		.word.active {
+			opacity: 1;
+			text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+		}
+
+		.hide {
+			opacity: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="story-container">
+
+		<div class="lyrics-container" id="lyricsContainer"></div>
+
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const lyricsContainer = document.getElementById('lyricsContainer');
+
+			// Текст песни (разбитый на слова)
+			const lyrics = [
+				["Стань", "ядовитым", "цветом", "в", "чёрной", "палитре"],
+				["Стань", "лучшим", "пейзажем,", "сказочным", "видом"],
+				["Стань", "чистым", "планом", "на", "грязные", "будни"],
+				["Стань", "моей", "звездой,", "если", "с", "вечностью", "заблудимся"],
+				["Стань", "никотином,", "что", "во", "мне", "остался", "смолами",],
+				["Стань", "моим", "цунами,", "стань", "моими", "волнами",],
+				["Стань", "громкой", "молнией", "в", "солнечный", "день",],
+				["Стань", "обжигающим", "огнём", "среди", "углей",],
+				["Будь", "водой,", "которой", "я", "не", "могу", "напиться",],
+				["Летай", "под", "небом", "так,", "как", "не", "летают", "птицы",],
+				["Растворись", "наркотиком,", "живи", "в", "моём", "теле",],
+				["Нужно", "твоё", "присутствие,", "чтобы", "лететь",],
+				["Стань", "самой", "проспиртованной", "каплей", "вина",],
+				["Стань", "дорогой,", "для", "которой", "не", "нужно", "знать", "правила",],
+				["Стань", "входом", "в", "нирвану,", "где", "не", "нужны", "выходы",],
+				["Посреди", "трудной", "недели", "стань", "выходным",],
+				["Стань", "розовым", "закатом,", "спрячься", "за", "высотками",],
+				["Стань", "моим", "спасением", "—", "войди", "пулей", "в", "висок",],
+				["Стань", "проходными", "дворами", "в", "моём", "маршруте",],
+				["Стань", "тем,", "что", "припечёт,", "тем,", "что", "остудит",],
+			];
+
+			// Временные метки для каждого слова (в миллисекундах)
+			const wordTimings = [
+				[1000, 1300, 1600, 1900, 2200, 2500],
+				[4000, 4300, 4600, 7000, 7300],
+				[8300, 8600, 8900, 9200, 9500, 9800],
+				[10800, 11100, 11400, 13700, 14000, 14300, 14600],
+				[15600, 15900, 18200, 18500, 18800, 19100, 19400],
+				[20400, 20700, 21000, 21300, 21600, 21900, 22200],
+				[15600, 15900, 18200, 18500, 18800, 19100, 19400],
+				[15600, 15900, 18200, 18500, 18800, 19100, 19400],
+				[15600, 15900, 18200, 18500, 18800, 19100, 19400],
+				[15600, 15900, 18200, 18500, 18800, 19100, 19400],
+				[15600, 15900, 18200, 18500, 18800, 19100, 19400],
+				[15600, 15900, 18200, 18500, 18800, 19100, 19400],
+			];
+			let startWordTimings = 1000;
+			// Создаем элементы для каждого слова
+			lyrics.forEach((row, ind) => {
+				const divRowContainer = document.createElement('div');
+				divRowContainer.className = 'divRowContainer';
+				row.forEach((word, index) => {
+					const span = document.createElement('span');
+					span.className = 'word hide';
+					span.textContent = word + ' ';
+					span.dataset.time = startWordTimings;
+					startWordTimings += 400;
+					divRowContainer.appendChild(span);
+				});
+				startWordTimings += 1000;
+				lyricsContainer.appendChild(divRowContainer);
+			});
+
+			const wordElements = document.querySelectorAll('.word');
+			let isPlaying = false;
+			let startTime;
+			let animationFrame;
+
+			function startPlayback() {
+				isPlaying = true;
+				startTime = Date.now();
+				updatePlayback();
+			}
+
+			function updatePlayback() {
+				if (!isPlaying) return;
+
+				const currentTime = Date.now() - startTime;
+				const totalDuration = 75000; // 20 секунд общая длительность
+
+				// Обновляем прогресс-бар
+
+				// Показываем/скрываем слова в соответствии с таймингом
+				wordElements.forEach(word => {
+					const wordTime = parseInt(word.dataset.time);
+					if (currentTime >= wordTime && currentTime < wordTime + 2000) {
+						word.classList.add('active');
+						word.classList.remove('hide');
+					} else {
+						word.classList.remove('active');
+
+					}
+				});
+				console.log(currentTime);
+				// Если песня закончилась, сбрасываем
+				if (currentTime >= totalDuration) {
+
+					playbackEnded();
+				} else {
+					animationFrame = requestAnimationFrame(updatePlayback);
+				}
+			}
+
+			function playbackEnded() {
+				isPlaying = false;
+
+				// Сбрасываем все слова
+				wordElements.forEach(word => {
+					word.classList.add('active');
+				});
+			}
+
+			startPlayback();
+		});
+	</script>
+</body>
+
+</html>
